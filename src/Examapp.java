@@ -7,6 +7,7 @@ import in.swifiic.hub.lib.Helper;
 import in.swifiic.hub.lib.SwifiicHandler;
 import in.swifiic.hub.lib.xml.Action;
 import in.swifiic.hub.lib.xml.Notification;
+import in.swifiic.hub.lib.xml.Argument;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,7 +21,7 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class Examapp extends Base implements SwifiicHandler {
-
+	
 	private static final Logger logger = LogManager.getLogManager().getLogger(
 			"");
 	private DTNClient dtnClient;
@@ -60,7 +61,7 @@ public class Examapp extends Base implements SwifiicHandler {
 					Action action = Helper.parseAction(message);
 					Notification notif = new Notification(action);
 					String toUsers[];
-					
+				
 					if(action.getOperationName().equalsIgnoreCase("SubmitCopy"))
 					{
 						notif.updateNotificatioName("DeliverCopy");
@@ -72,13 +73,18 @@ public class Examapp extends Base implements SwifiicHandler {
 					{
 						notif.updateNotificatioName("DeliverQuestions");
 						String userList = action.getArgument("students");
-						toUsers =userList.split("|");
+						toUsers =userList.split("\\|");
 					}else {
 						logger.log(Level.SEVERE, "Invalid argument " + action.getOperationName());
 						return;
 					}
 					for(int usrCount=0; usrCount< toUsers.length; usrCount++){
-						String toUser = toUsers[usrCount]; 
+						String toUser = toUsers[usrCount];
+						
+						//adding toUser argument
+						notif.deleteArgument("toUser");
+						notif.addArgument("toUser", toUser);
+						
 						// A user may have multiple devices
 						List<String> deviceList = Helper.getDevicesForUser(toUser,
 								ctx);
