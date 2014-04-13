@@ -78,10 +78,12 @@ public class Examapp extends Base implements SwifiicHandler {
 						logger.log(Level.SEVERE, "Invalid argument " + action.getOperationName());
 						return;
 					}
+					logger.log(Level.INFO, "had received \n{0}\n", message);
 					for(int usrCount=0; usrCount< toUsers.length; usrCount++){
 						String toUser = toUsers[usrCount];
 						
 						//adding toUser argument
+						notif.deleteArgument("students");
 						notif.deleteArgument("toUser");
 						notif.addArgument("toUser", toUser);
 						
@@ -92,15 +94,14 @@ public class Examapp extends Base implements SwifiicHandler {
 						String response = Helper.serializeNotification(notif);
 						for (int i = deviceList.size() - 1; i >= 0; --i) {
 							send(deviceList.get(i)
-									+ "/in.swifiic.android.app.examapp", response);
+									+ "/in.swifiic.examapp", response);
 							// Mark bundle as delivered...
 							logger.log(
 									Level.INFO,
-									"Attempted to send to {1}, had received \n{0}\n and responsed with \n {2}",
+									"Attempted to send to {0} with string \n {1}",
 									new Object[] {
-											message,
 											deviceList.get(i)
-											+ "/in.swifiic.android.app.examapp",
+											+ "/in.swifiic.examapp",
 											response });
 						}
 					}
